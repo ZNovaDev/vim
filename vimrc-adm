@@ -1,0 +1,245 @@
+" $VIMRUNTIME refers to the versioned system directory where Vim stores its
+" system runtime files -- /usr/share/vim/vim<version>.
+"
+" Vim will load $VIMRUNTIME/defaults.vim if the user does not have a vimrc.
+" This happens after /etc/vim/vimrc(.local) are loaded, so it will override
+" any settings in these files.
+"
+" If you don't want that to happen, uncomment the below line to prevent
+" defaults.vim from being loaded.
+" let g:skip_defaults_vim = 1
+"
+" If you would rather _use_ default.vim's settings, but have the system or
+" user vimrc override its settings, then uncomment the line below.
+" source $VIMRUNTIME/defaults.vim
+
+" All Debian-specific settings are defined in $VIMRUNTIME/debian.vim and
+" sourced by the call to :runtime you can find below.  If you wish to change
+" any of those settings, you should do it in this file or
+" /etc/vim/vimrc.local, since debian.vim will be overwritten everytime an
+" upgrade of the vim packages is performed. It is recommended to make changes
+" after sourcing debian.vim so your settings take precedence.
+
+runtime! debian.vim
+
+" Uncomment the next line to make Vim more Vi-compatible
+" NOTE: debian.vim sets 'nocompatible'.  Setting 'compatible' changes
+" numerous options, so any other options should be set AFTER changing
+" 'compatible'.
+"set compatible
+
+" Vim5 and later versions support syntax highlighting. Uncommenting the next
+" line enables syntax highlighting by default.
+"syntax on
+
+" If using a dark background within the editing area and syntax highlighting
+" turn on this option as well
+"set background=dark
+
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+"au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" Uncomment the following to have Vim load indentation rules and plugins
+" according to the detected filetype.
+"filetype plugin indent on
+
+" The following are commented out as they cause vim to behave a lot
+" differently from regular Vi. They are highly recommended though.
+"set showcmd		" Show (partial) command in status line.
+"set showmatch		" Show matching brackets.
+"set ignorecase		" Do case insensitive matching
+"set smartcase		" Do smart case matching
+"set incsearch		" Incremental search
+"set autowrite		" Automatically save before commands like :next and :make
+"set hidden		" Hide buffers when they are abandoned
+"set mouse=a		" Enable mouse usage (all modes)
+
+" Source a global configuration file if available
+if filereadable("/etc/vim/vimrc.local")
+  source /etc/vim/vimrc.local
+endif
+
+
+" ========================
+"      基础设置
+" ========================
+set nocompatible              " 关闭 vi 兼容模式
+set nu                        " 显示行号
+set relativenumber            " 显示相对行号
+set cursorline                " 高亮当前行
+set ruler                     " 显示光标位置
+set scrolloff=3               " 上下滚动保留行数
+set autoindent                " 自动缩进
+set cindent                   " C 风格缩进
+set tabstop=4                 " Tab 宽度
+set softtabstop=4             " 插入模式 Tab 空格数
+set shiftwidth=4              " 缩进空格数
+set expandtab                 " Tab 转空格
+set hlsearch                  " 高亮搜索结果
+set ignorecase                " 搜索忽略大小写
+set incsearch                 " 实时搜索
+set termguicolors             " 启用真彩色
+set clipboard=unnamedplus     " 共享系统剪贴板
+set mouse=a                   " 启用鼠标支持
+set list                      " 显示不可见字符
+set listchars=tab:\|\ ,trail:.,extends:>,precedes:k
+set showmatch                 " 高亮匹配括号
+set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936,ucs-bom
+set termencoding=utf-8
+set encoding=utf-8
+set wrap                      " 自动换行
+set linebreak                 " 单词边界换行
+filetype plugin indent on
+" 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set report=0  "default
+
+set laststatus=2              " 总是显示状态栏
+" 状态栏格式
+set statusline=%F\ %y%r%m%*%=before\ %{\(localtime()-getftime(expand\(\"%\"\))\)/60}min\ \ \ %{&ff}\[%{&fenc}]\ [row:%l/%L,col:%c]\ %p%%
+
+
+" ========================
+"      快捷键映射
+" ========================
+let mapleader=","  " 定义前缀键
+
+inoremap jk <Esc>
+inoremap ff <Esc>la
+nmap <F9> :noh<CR>                    " 取消高亮
+nmap <F2> :setlocal number!<CR>       " 切换行号
+map <F3> a<C-R>=strftime("%Y-%m-%d %a %I:%M %p")<CR><Esc>  " 插入时间
+
+vmap <C-c> :!/mnt/c/Windows/System32/clip.exe<cr>u
+
+" 复制当前文件路径到剪贴板
+nmap <leader>fn :let @*=substitute(expand("%"), "/", "\\", "g")<CR>
+nmap <leader>fp :let @*=substitute(expand("%:p"), "/", "\\", "g")<CR>
+
+" 标签页管理
+map <leader>tn :tabnew<cr>   " 新建标签页
+map <leader>tc :tabclose<cr> " 关闭标签页
+map <leader>th :tabp<cr>     " 上一个标签页
+map <leader>tl :tabn<cr>     " 下一个标签页
+
+" 切换缓冲区
+nnoremap <C-left> :bn<CR>
+nnoremap <C-right> :bp<CR>
+
+"命令模式的行首尾"
+cnoremap <C-a> <home>
+cnoremap <C-e> <end>
+
+nnoremap vv ^vg_      "普通模式下vv选中当前行
+inoremap <C-u> <esc>mzgUiw`za   "插入模式下将当前单词转换为大写
+
+" 特殊符号补全
+inoremap ( ()<ESC>i
+inoremap ) <c-r>=ClosePair(')')<CR>
+inoremap { {}<Esc>i
+inoremap {<CR> {<CR>}<Esc>O
+inoremap } <c-r>=ClosePair('}')<CR>
+inoremap [ []<ESC>i
+inoremap ] <c-r>=ClosePair(']')<CR>
+inoremap " <c-r>=DQuote()<CR>
+inoremap ' <c-r>=SQuote()<CR>
+inoremap <BS> <c-r>=RemovePairs()<CR>
+inoremap <S-Enter> <Esc>Ao
+
+
+" ========================
+"      自动命令
+" ========================
+" 恢复上次编辑位置
+" 重新打开文档时光标回到文档关闭前的位置
+if has("autocmd")
+  autocmd BufReadPost * if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \ exe "normal g'\"" |
+  \ endif
+endif
+
+" 插入模式切换行号类型
+augroup relative_numbser
+  autocmd!
+  autocmd InsertEnter * :set norelativenumber
+  autocmd InsertLeave * :set relativenumber
+augroup END
+
+
+" ========================
+"      函数定义
+" ========================
+" 符号补全函数
+function! ClosePair(char)
+  if getline('.')[col('.') - 1] == a:char
+    return "\<Right>"
+  else
+    return a:char
+  endif
+endfunction
+
+"自动补全双引号
+function! DQuote()
+  if getline('.')[col('.') - 1] == '"'
+    return "\<Right>"
+  else
+    if getline('.')[col('.') - 2] == '"'
+      return '"'
+    else
+      return "\"\"\<Left>"
+    endif
+  endif
+endfunction
+
+"自动补全单引号
+function! SQuote()
+  if getline('.')[col('.') - 1] == "'"
+    return "\<Right>"
+  else
+    if getline('.')[col('.') - 2] == "'"
+      return "'"
+    else
+      return "''\<Left>"
+    endif
+  endif
+endfunction
+
+" 按BackSpace键时判断当前字符和前一字符是否为括号对或一对引号，如果是则两者均删除，并保留BackSpace正常功能
+func! RemovePairs()
+	let l:line = getline(".") " 取得当前行
+	let l:current_char = l:line[col(".")-1] " 取得当前光标字符
+	let l:previous_char = l:line[col(".")-2] " 取得光标前一个字符
+
+	if (l:previous_char == '"' || l:previous_char == "'") && l:previous_char == l:current_char
+		return "\<delete>\<bs>"
+	elseif index(["(", "[", "{"], l:previous_char) != -1
+		" 将光标定位到前括号上并取得它的索引值
+		execute "normal! h"
+		let l:front_col = col(".")
+		" 将光标定位到后括号上并取得它的行和索引值
+		execute "normal! %"
+		let l:line1 = getline(".")
+		let l:back_col = col(".")
+		" 将光标重新定位到前括号上
+		execute "normal! %"
+		" 当行相同且后括号的索引比前括号大1则匹配成功
+		if l:line1 == l:line && l:back_col == l:front_col + 1
+			return "\<right>\<delete>\<bs>"
+		else
+			return "\<right>\<bs>"
+		end
+	else
+		return "\<bs>"
+	end
+endfunc
+
+" ========================
+"      主题与光标
+" ========================
+" 终端光标样式
+if &term =~ "xterm"
+  let &t_SI = "\<Esc>[5 q"  " 插入模式：闪烁竖线
+  let &t_EI = "\<Esc>[2 q"  " 普通模式：实心方块
+  let &t_SR = "\<Esc>[3 q"  " 替换模式：闪烁下划线
+  let &t_CS = "\<Esc>[h q"  " 命令行模式：下划线
+endif

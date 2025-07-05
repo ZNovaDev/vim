@@ -1,0 +1,339 @@
+" ========================
+"      基础设置
+" ========================
+set nocompatible              " 关闭 vi 兼容模式
+set nu                        " 显示行号
+set relativenumber            " 显示相对行号
+set cursorline                " 高亮当前行
+set ruler                     " 显示光标位置
+set scrolloff=3               " 上下滚动保留行数
+set autoindent                " 自动缩进
+set cindent                   " C 风格缩进
+set tabstop=4                 " Tab 宽度
+set softtabstop=4             " 插入模式 Tab 空格数
+set shiftwidth=4              " 缩进空格数
+set expandtab                 " Tab 转空格
+set hlsearch                  " 高亮搜索结果
+set ignorecase                " 搜索忽略大小写
+set incsearch                 " 实时搜索
+set termguicolors             " 启用真彩色
+set clipboard=unnamedplus     " 共享系统剪贴板
+set mouse=a                   " 启用鼠标支持
+set list                      " 显示不可见字符
+set listchars=tab:\|\ ,trail:.,extends:>,precedes:k
+set showmatch                 " 高亮匹配括号
+set laststatus=2              " 总是显示状态栏
+set fileencodings=utf-8,gbk2312,gbk,gb18030,cp936,ucs-bom
+set termencoding=utf-8
+set encoding=utf-8
+set wrap                      " 自动换行
+set linebreak                 " 单词边界换行
+filetype plugin indent on
+" 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set report=0  "default
+
+" 状态栏格式
+set statusline=%F\ %y%r%m%*%=before\ %{\(localtime()-getftime(expand\(\"%\"\))\)/60}min\ \ \ %{&ff}\[%{&fenc}]\ [row:%l/%L,col:%c]\ %p%%
+
+" ========================
+"      插件管理
+" ========================
+call plug#begin()
+" 文件树插件
+Plug 'https://gitclone.com/github.com/preservim/nerdtree.git', { 'on': 'NERDTreeToggle' }
+" 主题插件
+Plug 'https://gitclone.com/github.com/dracula/vim.git', { 'as': 'dracula' }
+" 注释插件
+Plug 'https://gitclone.com/github.com/preservim/nerdcommenter'
+" 自动补全
+Plug 'https://gitclone.com/github.com/neoclide/coc.nvim/', {'branch': 'release'}
+" 缩进指示线
+Plug 'https://gitclone.com/github.com/Yggdroot/indentLine'
+" 彩虹括号
+Plug 'luochen1990/rainbow'
+call plug#end()
+
+" ========================
+"      插件配置
+" ========================
+" ------ NERDTree ------
+" 唯一窗口时自动关闭
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" ------ 缩进指示线 ------
+let g:indentLine_enabled = 1      " 启用插件
+let g:indentLine_char = '|'       " 缩进线字符
+let g:indentLine_conceallevel = 2 " 正常渲染
+
+" ------ 注释插件 ------
+autocmd FileType json setlocal commentstring=//\ %s
+
+" ------ Coc 补全 ------
+set rtp+=~/.vim/plugged/coc.nvim  " 运行时路径，vim启动自动加载路径
+" 当光标停留在错误的行上时显示浮动窗口
+" 启用自动诊断显示
+"let g:coc_enable_diagnostic_sign = 1      " 在行号左边显示诊断标志（如错误、警告图标）
+"let g:coc_diagnostic_enable = 1           " 启用诊断功能
+"let g:coc_diagnostic_check_current_line = 1  " 在光标所在行显示诊断信息
+"let g:coc_diagnostic_virtual_text = 1     " 启用虚拟文本显示错误和警告
+
+autocmd CursorHold * silent call CocActionAsync('doHover')
+
+" ------ 彩虹括号 ------
+let g:rainbow_active = 1  
+
+
+" ========================
+"      快捷键映射
+" ========================
+let mapleader=","  " 定义前缀键
+
+inoremap jk <Esc>
+inoremap ff <Esc>la
+
+" 复制当前文件路径到剪贴板
+nmap <leader>fn :let @*=substitute(expand("%"), "/", "\\", "g")<CR>
+nmap <leader>fp :let @*=substitute(expand("%:p"), "/", "\\", "g")<CR>
+
+vmap <C-c> :!/mnt/c/Windows/System32/clip.exe<cr>u
+"vmap <C-c> "+y
+"vnoremap <BS> d
+"vnoremap <C-C> "+y
+"vnoremap <C-Insert> "+y
+"imap <C-V> "+gP
+"map <S-Insert> "+gP
+"cmap <S-Insert> <C-R>+
+
+"命令模式的行首尾"
+cnoremap <C-a> <home>
+cnoremap <C-e> <end>
+
+nnoremap vv ^vg_      "普通模式下vv选中当前行
+inoremap <C-u> <esc>mzgUiw`za   "插入模式下将当前单词转换为大写
+
+" 编译运行
+map <F5> :call CompileRunGcc()<CR>
+
+" 文件树操作
+nnoremap <leader>n :NERDTreeFocus<CR> "<leader>n：聚焦 NERDTree 窗口。
+nnoremap <C-g> :NERDTreeToggle .<CR>  "<C-g>：切换 NERDTree。
+nnoremap <C-k> :NERDTreeFind<CR>      "<C-k>：在文件树中定位当前文件。
+
+" 标签页管理
+map <leader>tn :tabnew<cr>   " 新建标签页
+map <leader>tc :tabclose<cr> " 关闭标签页
+map <leader>th :tabp<cr>     " 上一个标签页
+map <leader>tl :tabn<cr>     " 下一个标签页
+
+" 切换缓冲区
+nnoremap <C-left> :bn<CR>
+nnoremap <C-right> :bp<CR>
+
+" 窗口管理
+" 移动分割窗口
+"nmap <C-j> <C-W>j
+"nmap <C-k> <C-W>k
+"nmap <C-h> <C-W>h
+"nmap <C-l> <C-W>l
+" 正常模式下 alt+j,k,h,l 调整分割窗口大小
+nnoremap <M-j> :resize +5<cr>
+nnoremap <M-k> :resize -5<cr>
+nnoremap <M-h> :vertical resize -5<cr>
+nnoremap <M-l> :vertical resize +5<cr>
+
+" 功能键
+nmap <leader>s :source ~/.vimrc<CR>   " 重载配置
+nmap <leader>e :e ~/.vimrc<CR>        " 编辑配置
+nmap <F9> :noh<CR>                    " 取消高亮
+nmap <F2> :setlocal number!<CR>       " 切换行号
+map <F3> a<C-R>=strftime("%Y-%m-%d %a %I:%M %p")<CR><Esc>  " 插入时间
+" 编译快捷键
+map <F5> :call CompileRunGcc()<CR>
+
+" 补全相关
+inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "\<Tab>" : coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+nnoremap <silent> K :call ShowDocumentation()<CR>  " 查看文档
+nnoremap <leader>f :call CocAction('format')<CR>   " 格式化
+nnoremap <leader>d :CocList diagnostics<CR>        " 查看诊断
+
+" 特殊符号补全
+inoremap ( ()<ESC>i
+inoremap ) <c-r>=ClosePair(')')<CR>
+inoremap { {}<Esc>i
+inoremap {<CR> {<CR>}<Esc>O
+inoremap } <c-r>=ClosePair('}')<CR>
+inoremap [ []<ESC>i
+inoremap ] <c-r>=ClosePair(']')<CR>
+inoremap " <c-r>=DQuote()<CR>
+inoremap ' <c-r>=SQuote()<CR>
+inoremap <BS> <c-r>=RemovePairs()<CR>
+inoremap <S-Enter> <Esc>Ao
+
+" ========================
+"      自动命令
+" ========================
+" 恢复上次编辑位置
+" 重新打开文档时光标回到文档关闭前的位置
+if has("autocmd")
+  autocmd BufReadPost * if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \ exe "normal g'\"" |
+  \ endif
+endif
+
+" 新建文件模板
+autocmd BufNewFile *.py,*.cpp,*.cc,*.[ch],*.sh,*.Java,*.go exec ":call SetTitle()"
+autocmd BufNewFile * normal G  " 新建文件后跳至末尾
+
+" 插入模式切换行号类型
+augroup relative_numbser
+  autocmd!
+  autocmd InsertEnter * :set norelativenumber
+  autocmd InsertLeave * :set relativenumber
+augroup END
+
+" ========================
+"      函数定义
+" ========================
+" 编译运行函数
+func! CompileRunGcc()
+  execute "w"
+  if &filetype == 'c'
+    execute 'cd %:h'
+    if !isdirectory('build')
+      execute "!mkdir build"
+    endif
+    execute '!gcc % -o build/%<'
+    execute 'term ./build/%<'
+  elseif &filetype == 'cpp'
+    execute 'cd %:h'
+    if !isdirectory('build')
+      execute "!mkdir build"
+    endif
+    execute '!g++ % -o build/%<'
+    execute 'bo term ./build/%<'
+  elseif &filetype == 'python'
+    execute 'cd %:h'
+    execute 'term python3 %'
+  elseif &filetype == 'sh'
+    execute 'cd %:h'
+    execute '!time bash %'
+  endif
+endfunc
+
+" 文件头模板函数
+"新建.c,.h,.sh,.Java, .python文件，自动插入文件头
+func SetTitle()
+  if &filetype == 'sh' || &filetype == 'python'
+    call setline(1,"\#########################################################################")
+    call append(line("."),   "\# File Name:    ".expand("%"))
+    call append(line(".")+1, "\# Author:       nova")
+    call append(line(".")+2, "\# Mail:         nova_xyz@163.com")
+    call append(line(".")+3, "\# Created Time: ".strftime("%c"))
+    call append(line(".")+4, "\#########################################################################")
+    call append(line(".")+5, "\#!/bin/bash")
+    call append(line(".")+6, "")
+  else
+    call setline(1, "/*************************************************************************")
+    call append(line("."),   "> File Name:     ".expand("%"))
+    call append(line(".")+1, "> Author:        nova")
+    call append(line(".")+2, "> Mail:          nova-xy@163.com")
+    call append(line(".")+3, "> Created Time:  ".strftime("%c"))
+    call append(line(".")+4, "> Description:   ")
+    call append(line(".")+5, " ************************************************************************/")
+    call append(line(".")+6, "")
+  endif
+endfunc
+
+" 符号补全函数
+function! ClosePair(char)
+  if getline('.')[col('.') - 1] == a:char
+    return "\<Right>"
+  else
+    return a:char
+  endif
+endfunction
+
+"自动补全双引号
+function! DQuote()
+  if getline('.')[col('.') - 1] == '"'
+    return "\<Right>"
+  else
+    if getline('.')[col('.') - 2] == '"'
+      return '"'
+    else
+      return "\"\"\<Left>"
+    endif
+  endif
+endfunction
+
+"自动补全单引号
+function! SQuote()
+  if getline('.')[col('.') - 1] == "'"
+    return "\<Right>"
+  else
+    if getline('.')[col('.') - 2] == "'"
+      return "'"
+    else
+      return "''\<Left>"
+    endif
+  endif
+endfunction
+
+" 按BackSpace键时判断当前字符和前一字符是否为括号对或一对引号，如果是则两者均删除，并保留BackSpace正常功能
+func! RemovePairs()
+	let l:line = getline(".") " 取得当前行
+	let l:current_char = l:line[col(".")-1] " 取得当前光标字符
+	let l:previous_char = l:line[col(".")-2] " 取得光标前一个字符
+
+	if (l:previous_char == '"' || l:previous_char == "'") && l:previous_char == l:current_char
+		return "\<delete>\<bs>"
+	elseif index(["(", "[", "{"], l:previous_char) != -1
+		" 将光标定位到前括号上并取得它的索引值
+		execute "normal! h"
+		let l:front_col = col(".")
+		" 将光标定位到后括号上并取得它的行和索引值
+		execute "normal! %"
+		let l:line1 = getline(".")
+		let l:back_col = col(".")
+		" 将光标重新定位到前括号上
+		execute "normal! %"
+		" 当行相同且后括号的索引比前括号大1则匹配成功
+		if l:line1 == l:line && l:back_col == l:front_col + 1
+			return "\<right>\<delete>\<bs>"
+		else
+			return "\<right>\<bs>"
+		end
+	else
+		return "\<bs>"
+	end
+endfunc
+
+" Coc 辅助函数
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+"ShowDocumentation 函数检查语言服务器是否支持悬停文档，如果支持则显示文档，否则执行默认的 K 键行为"
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+" ========================
+"      主题与光标
+" ========================
+colorscheme dracula  " 主题设置
+
+" 终端光标样式
+if &term =~ "xterm"
+  let &t_SI = "\<Esc>[5 q"  " 插入模式：闪烁竖线
+  let &t_EI = "\<Esc>[2 q"  " 普通模式：实心方块
+  let &t_SR = "\<Esc>[3 q"  " 替换模式：闪烁下划线
+  let &t_CS = "\<Esc>[h q"  " 命令行模式：划线
+endif

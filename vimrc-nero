@@ -90,6 +90,13 @@ let mapleader=","  " 定义前缀键
 
 inoremap jk <Esc>
 inoremap ff <Esc>la
+inoremap qq <Esc>i
+
+" 插入模式下使用 Ctrl+hjkl 移动光标
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
 
 " 复制当前文件路径到剪贴板
 nmap <leader>fn :let @*=substitute(expand("%"), "/", "\\", "g")<CR>

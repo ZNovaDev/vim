@@ -106,6 +106,14 @@ let mapleader=","  " 定义前缀键
 
 inoremap jk <Esc>
 inoremap ff <Esc>la
+inoremap qq <Esc>i
+
+" 插入模式下使用 Ctrl+hjkl 移动光标
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+
 nmap <F9> :noh<CR>                    " 取消高亮
 nmap <F2> :setlocal number!<CR>       " 切换行号
 map <F3> a<C-R>=strftime("%Y-%m-%d %a %I:%M %p")<CR><Esc>  " 插入时间
